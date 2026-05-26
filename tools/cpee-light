@@ -1,0 +1,82 @@
+#!/usr/bin/ruby
+#
+# This file is part of CPEE-LIGHT.
+#
+# CPEE-LIGHT is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# CPEE-LIGHT is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# CPEE-LIGHT (file LICENSE in the main directory).  If not, see
+# <http://www.gnu.org/licenses/>.
+
+curpath = __dir__
+require 'rubygems'
+require 'optparse'
+require 'fileutils'
+require 'xml/smart'
+
+def wrap(s, width=78, indent=18)
+	lines = []
+	line, s = s[0..indent-2], s[indent..-1]
+  s.split(/\n/).each do |ss|
+    ss.split(/[ \t]+/).each do |word|
+      if line.size + word.size >= width
+        lines << line
+        line = (" " * (indent)) + word
+      else
+        line << " " << word
+      end
+    end
+    lines << line if line
+    line = (" " * (indent-1))
+  end
+	return lines.join "\n"
+end
+
+ARGV.options { |opt|
+  opt.summary_indent = ' ' * 2
+  opt.summary_width = 15
+  opt.banner = "Usage:\n#{opt.summary_indent}#{File.basename($0)} [options] [new DIR | init]\n"
+  opt.on("Options:")
+  opt.on("--help", "-h", "This text") { puts opt; exit }
+	opt.on("")
+  opt.on(wrap("new [DIR]         scaffolds a sample light."))
+  opt.on(wrap("init              init sensor and get one value (you might need to ."))
+  opt.parse!
+}
+if (ARGV.length <  1) ||
+   (ARGV.length == 1  && !(%w(init).include?(ARGV[0]))) ||
+   (ARGV.length == 2  && !(%w(new).include?(ARGV[0]))) ||
+   (ARGV.length >  2)
+  puts ARGV.options
+  exit
+end
+command = ARGV[0]
+p1      = ARGV[1]
+
+if command == 'new'
+  insta = "#{curpath}/../server/"
+  if !File.exist?(p1)
+    FileUtils.cp_r(insta,p1)
+  else
+    FileUtils.cp_r(Dir.glob(File.join(insta,'*')).delete_if{|e| e =~ /\.conf/ },p1,remove_destination: true)
+    puts 'Directory already exists, updating ...'
+  end
+elsif command == 'init'
+  dev = `i2cdetect -l`.split("\n").find do |l|
+    l =~ /CH341/
+  end.match(/^i2c-(\d+)/)&.[](1)
+  if dev
+    addr = `i2cdetect -y #{dev}`.sub(/.*?\n/,'').match(/ (\d+) /)&.[](1)
+    if addr
+      `sudo echo bh1750 0x#{addr} | sudo tee /sys/bus/i2c/devices/i2c-#{dev}/new_device`
+    end
+    puts `cat /sys/bus/iio/devices/iio:device*/in_illuminance_raw`
+  end
+end
