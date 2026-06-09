@@ -19,7 +19,6 @@ curpath = __dir__
 require 'rubygems'
 require 'optparse'
 require 'fileutils'
-require 'xml/smart'
 
 def wrap(s, width=78, indent=18)
 	lines = []
@@ -77,6 +76,7 @@ elsif command == 'init'
     if addr
       `sudo echo bh1750 0x#{addr} | sudo tee /sys/bus/i2c/devices/i2c-#{dev}/new_device`
     end
+    sleep 2
     puts `cat /sys/bus/iio/devices/iio:device*/in_illuminance_raw`
   end
 end
