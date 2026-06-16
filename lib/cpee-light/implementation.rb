@@ -28,7 +28,7 @@ module CPEE
         op = @a[0]
         value = File.read(op[:read]).to_i rescue 0
         scale = File.read(op[:scale]).to_f rescue 0
-        Riddl::Parameter::Simple.new('lumens',value*scale)
+        Riddl::Parameter::Simple.new('lux',value*scale)
       end
     end #}}}
     class GetMany < Riddl::Implementation #{{{
@@ -40,7 +40,7 @@ module CPEE
             while true
               Riddl::Client.new(cb).put([
                 Riddl::Header.new('CPEE-UPDATE','true'),
-                Riddl::Parameter::Simple.new('lumens',value*scale)
+                Riddl::Parameter::Simple.new('lux',value*scale)
               ]) if cb.is_a?(String)
               sleep 1
             end

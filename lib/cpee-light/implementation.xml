@@ -23,8 +23,8 @@
   <message name="continuous">
     <parameter name="mode" fixed="continuous"/>
   </message>
-  <message name="lumens">
-    <parameter name="lumens" type="float"/>
+  <message name="lux">
+    <parameter name="lux" type="float"/>
   </message>
   <message name="intensity">
     <parameter name="intensity" type="integer">
@@ -49,8 +49,8 @@
       </resource>
     </resource>
     <resource relative="sensor">
-      <get in="one" out="lumens"/>
-      <get in="continuous" out="lumens"/>
+      <get in="one" out="lux"/>
+      <get in="continuous" out="lux"/>
     </resource>
   </resource>
 

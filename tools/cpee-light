@@ -95,5 +95,5 @@ elsif command == 'state'
   states.each do |k,s|
     puts "#{k}: #{s}"
   end
-  puts "Lumens: #{sensor['raw   '].to_f * sensor['scale '].to_f}"
+  puts "Lux: #{sensor['raw   '].to_f * sensor['scale '].to_f}"
 end
