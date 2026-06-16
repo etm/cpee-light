@@ -45,12 +45,14 @@ ARGV.options { |opt|
   opt.on("Options:")
   opt.on("--help", "-h", "This text") { puts opt; exit }
 	opt.on("")
-  opt.on(wrap("new [DIR]         scaffolds a sample light."))
-  opt.on(wrap("init              init sensor and get one value (you might need to ."))
+  opt.on("Commands:")
+  opt.on(wrap("  new [DIR]       scaffolds a sample light."))
+  opt.on(wrap("  init            init sensor and get one value (you might need to)."))
+  opt.on(wrap("  state           stae of sensor and leds."))
   opt.parse!
 }
 if (ARGV.length <  1) ||
-   (ARGV.length == 1  && !(%w(init).include?(ARGV[0]))) ||
+   (ARGV.length == 1  && !(%w(init state).include?(ARGV[0]))) ||
    (ARGV.length == 2  && !(%w(new).include?(ARGV[0]))) ||
    (ARGV.length >  2)
   puts ARGV.options
@@ -79,4 +81,19 @@ elsif command == 'init'
     sleep 2
     puts `cat /sys/bus/iio/devices/iio:device*/in_illuminance_raw`
   end
+elsif command == 'state'
+  states = {
+    'red   ' => `gpioget -a -c gpiochip1 0` =~ /inactive/ ? 'on' : 'off',
+    'yellow' => `gpioget -a -c gpiochip1 1` =~ /inactive/ ? 'on' : 'off',
+    'white ' => `gpioget -a -c gpiochip1 2` =~ /inactive/ ? 'on' : 'off'
+  }
+  sensor = {
+    'raw   ' => `cat /sys/bus/iio/devices/iio:device*/in_illuminance_raw`,
+    'scale ' => `cat /sys/bus/iio/devices/iio:device*/in_illuminance_scale`
+  }
+
+  states.each do |k,s|
+    puts "#{k}: #{s}"
+  end
+  puts "Lumens: #{sensor['raw   '].to_f * sensor['scale '].to_f}"
 end
