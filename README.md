@@ -36,7 +36,7 @@ Now init i2c or use "cpee-light init":
 
 Play with integration time for sampling rate (0.12s default, 0.2s when dark, 0.05s when bright). Some things have to be done as root.
 
-Use the "cpee-light init" command for i2c init after compile. Add YOUR-USER to a group ch431 as proposed in frank zagos documentation to use service as user:
+Use the "cpee-light init" command for i2c init after compile. Add YOUR-USER to a group ch431 (as proposed in frank zagos documentation) to use service as user:
 
 ```bash
   groupadd ch341
