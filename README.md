@@ -44,5 +44,11 @@ Use the "cpee-light init" command for i2c init after compile. Add YOUR-USER to a
   echo 'SUBSYSTEMS=="usb" ATTRS{idProduct}=="5512" ATTRS{idVendor}=="1a86" GROUP="ch341" MODE="0660"' > /etc/udev/rules.d/99-ch341.rules
 ```
 
+Start the server like all RIDDL services:
+
+```bash
+  cd server
+  ./light -v restart # or "./light start" to start in background
+```
 
 
