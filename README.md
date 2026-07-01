@@ -6,10 +6,12 @@ Switch off secureboot.
   git clone https://github.com/frank-zago/ch341-i2c-spi-gpio
   cd ch341-i2c-spi-gpio
   make
-  make install
+  sudo make install
 ```
 
-Plugin in. Jumper to I2C/GPIO.
+Reboot. Jumper to I2C/GPIO. Plugin in. 
+
+Try everything below as root:
 
 ```bash
   gpioinfo
